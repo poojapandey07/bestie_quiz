@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>BestieQuiz ✨ | Who Really Knows You?</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="css/style.css" />
+  
+  <!-- Favicon Emoji -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💖</text></svg>">
+</head>
+<body>
+
+  <!-- Floating animated background aesthetic -->
+  <div class="bg-blobs" aria-hidden="true">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+  </div>
+
+  <!-- App Header / Navigation Bar -->
+  <header class="app-header">
+    <div class="header-container">
+      <a class="brand-logo" href="#home" id="nav-brand">
+        <div class="brand-badge">✨</div>
+        <span class="brand-text">BestieQuiz</span>
+      </a>
+
+      <div class="header-actions">
+        <button type="button" class="btn-my-quizzes" id="btn-open-my-quizzes" title="View your created quizzes">
+          <span>👑</span>
+          <span>My Quizzes</span>
+        </button>
+        <button type="button" class="icon-btn" id="btn-toggle-sound" title="Toggle Sound Effects" aria-label="Toggle Sound">
+          <span id="sound-icon">🔊</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content Area -->
+  <main class="app-main">
+
+    <!-- ====================================================================
+         1. HOME SCREEN
+         ==================================================================== -->
+    <section id="screen-home" class="screen active">
+      <div class="hero-section">
+        <div class="hero-pill">
+          <span>💖</span> The Ultimate Friendship Test
+        </div>
+        <h1 class="hero-title">Who Really Knows You?</h1>
+        <p class="hero-subtitle">
+          Create your own quiz. Share it with your friends. Find out who knows you best.
+        </p>
+
+        <div class="hero-cta-group">
+          <a href="#create" class="btn btn-primary btn-lg" id="btn-home-create">
+            <span>✨</span> Create a Quiz
+          </a>
+          <button type="button" class="btn btn-outline btn-lg" id="btn-home-play-modal">
+            <span>🎮</span> Play a Quiz
+          </button>
+        </div>
+      </div>
+
+      <!-- 3-Step How It Works -->
+      <div class="steps-section">
+        <div class="section-tag">How It Works</div>
+        <h2 class="section-title">3 Easy Steps to Test Your Besties</h2>
+
+        <div class="steps-grid">
+          <div class="step-card">
+            <div class="step-badge">STEP 1</div>
+            <div class="step-icon">✍️</div>
+            <h3 class="step-heading">1. Create your questions</h3>
+            <p class="step-desc">Write fun personalized questions about yourself and select the correct answers.</p>
+          </div>
+
+          <div class="step-card">
+            <div class="step-badge">STEP 2</div>
+            <div class="step-icon">💌</div>
+            <h3 class="step-heading">2. Share your quiz</h3>
+            <p class="step-desc">Generate your unique link and send it directly to your best friends or group chats.</p>
+          </div>
+
+          <div class="step-card">
+            <div class="step-badge">STEP 3</div>
+            <div class="step-icon">🏆</div>
+            <h3 class="step-heading">3. See who knows you best</h3>
+            <p class="step-desc">Watch real-time scores roll in on your live creator leaderboard.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Play / Enter Code Card -->
+      <div class="quick-join-box">
+        <div class="quick-join-title">
+          <span>🔑</span> Have a Quiz Code from a friend?
+        </div>
+        <form id="form-quick-join" class="quick-join-form">
+          <input 
+            type="text" 
+            id="input-quick-code" 
+            class="input-field" 
+            placeholder="e.g. QZ7K29" 
+            maxlength="10" 
+            required 
+            autocomplete="off"
+            style="text-transform: uppercase; font-weight: 800; letter-spacing: 0.1em;"
+          />
+          <button type="submit" class="btn btn-secondary">
+            Join Quiz 🚀
+          </button>
+        </form>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         2. CREATE QUIZ SCREEN
+         ==================================================================== -->
+    <section id="screen-create" class="screen">
+      <div class="screen-header">
+        <span class="screen-badge">Builder</span>
+        <h1 class="screen-title">Create Your Friendship Quiz 🎨</h1>
+        <p class="screen-subtitle">Craft questions that only your true inner circle would know!</p>
+      </div>
+
+      <div class="glass-card">
+        <form id="form-create-quiz">
+          <!-- Quiz Info -->
+          <div class="form-group">
+            <label class="form-label" for="input-creator-name">
+              Your Name <span class="req">*</span>
+            </label>
+            <input 
+              type="text" 
+              id="input-creator-name" 
+              class="input-field" 
+              placeholder="e.g. Pooja, Alex, Jordan..." 
+              required 
+              maxlength="40"
+            />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="input-quiz-title">
+              Quiz Title <span class="req">*</span>
+            </label>
+            <input 
+              type="text" 
+              id="input-quiz-title" 
+              class="input-field" 
+              placeholder="e.g. How Well Do You Know Pooja? 💖" 
+              required 
+              maxlength="80"
+            />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="input-quiz-desc">
+              Short Description <span style="font-weight: 400; color: var(--text-light);">(Optional)</span>
+            </label>
+            <input 
+              type="text" 
+              id="input-quiz-desc" 
+              class="input-field" 
+              placeholder="e.g. Let's see who my true bestie is! No cheating allowed 👀" 
+              maxlength="150"
+            />
+          </div>
+
+          <hr style="border: none; border-top: 2px dashed #EAE5F2; margin: 1.75rem 0;" />
+
+          <!-- Questions Container -->
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+            <h3 style="font-weight: 800; font-size: 1.2rem;">Questions</h3>
+            <button type="button" class="btn btn-outline btn-sm" id="btn-add-sample-question" title="Need inspiration? Add a fun pre-made question!">
+              <span>💡</span> Idea Helper
+            </button>
+          </div>
+
+          <div id="question-cards-list" class="question-builder-container">
+            <!-- Dynamic Question Cards Inserted via JS -->
+          </div>
+
+          <!-- Builder Bottom Controls -->
+          <div class="builder-actions">
+            <button type="button" class="btn btn-outline" id="btn-add-question">
+              <span>➕</span> Add Question
+            </button>
+            <div class="question-counter-badge" id="question-count-text">
+              Questions: 2 / 30 (Min: 2, Max: 30)
+            </div>
+          </div>
+
+          <div style="margin-top: 2rem;">
+            <button type="submit" class="btn btn-primary btn-lg btn-block" id="btn-submit-create-quiz">
+              <span>🚀</span> Create Quiz & Generate Link
+            </button>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         3. QUIZ CREATED SCREEN
+         ==================================================================== -->
+    <section id="screen-created" class="screen">
+      <div class="glass-card created-card">
+        <div class="celebrate-icon">🎉</div>
+        <h1 class="screen-title" style="font-size: 2.2rem; margin-bottom: 0.5rem;">Your quiz is ready! 🎉</h1>
+        <p style="color: var(--text-muted); margin-bottom: 1rem;">
+          Share this unique link with your friends to see who knows you best!
+        </p>
+
+        <div>
+          <span style="font-size: 0.85rem; font-weight: 700; color: var(--text-light); text-transform: uppercase;">Quiz Code:</span>
+          <br />
+          <div class="quiz-id-tag" id="created-quiz-id">QZ7K29</div>
+        </div>
+
+        <div class="share-link-container">
+          <span style="font-size: 1.2rem;">🔗</span>
+          <input type="text" id="created-share-url-input" class="share-link-input" readonly />
+          <button type="button" class="btn btn-primary btn-sm" id="btn-copy-quiz-link">
+            <span>📋</span> <span id="copy-btn-text">Copy</span>
+          </button>
+        </div>
+
+        <!-- Social Quick Share Icons -->
+        <div class="social-share-bar">
+          <button type="button" class="social-share-btn social-whatsapp" id="btn-share-whatsapp" title="Share via WhatsApp">
+            💬
+          </button>
+          <button type="button" class="social-share-btn social-telegram" id="btn-share-telegram" title="Share via Telegram">
+            ✈️
+          </button>
+          <button type="button" class="social-share-btn social-twitter" id="btn-share-twitter" title="Share via Twitter / X">
+            🐦
+          </button>
+          <button type="button" class="social-share-btn" id="btn-native-share" title="System Share Menu">
+            📲
+          </button>
+        </div>
+
+        <div class="created-actions">
+          <a href="#" class="btn btn-secondary btn-lg" id="btn-created-play-self">
+            <span>🎮</span> Play Quiz Yourself
+          </a>
+          <a href="#" class="btn btn-outline" id="btn-created-view-leaderboard">
+            <span>🏆</span> View Creator Leaderboard
+          </a>
+          <a href="#create" class="btn btn-ghost">
+            <span>➕</span> Create Another Quiz
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         4. PLAY QUIZ SCREEN (Name Entry & Live Questions)
+         ==================================================================== -->
+    <section id="screen-play" class="screen">
+      <!-- 4A: Player Name Welcome Card -->
+      <div id="play-welcome-view" class="glass-card play-welcome-card">
+        <div class="play-creator-badge" id="play-creator-badge">
+          <span>💖</span> Quiz by <span id="play-creator-name" style="font-weight: 900;">...</span>
+        </div>
+        <h1 class="play-title" id="play-quiz-title">Loading Quiz...</h1>
+        <p class="play-desc" id="play-quiz-desc">Get ready to test your knowledge!</p>
+
+        <div style="display: inline-flex; align-items: center; gap: 0.5rem; background: #F1EDF8; padding: 0.4rem 1rem; border-radius: var(--radius-full); font-weight: 700; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 2rem;">
+          <span>📝</span> <span id="play-total-questions-count">0</span> Questions
+        </div>
+
+        <form id="form-start-quiz" class="name-input-group">
+          <label class="form-label" for="input-player-name" style="text-align: center; font-size: 1.15rem; margin-bottom: 0.75rem;">
+            What's your name? 🙋
+          </label>
+          <input 
+            type="text" 
+            id="input-player-name" 
+            class="input-field" 
+            placeholder="Enter your name or nickname..." 
+            required 
+            maxlength="30"
+            autocomplete="name"
+            style="text-align: center; font-size: 1.15rem; font-weight: 700;"
+          />
+          <button type="submit" class="btn btn-primary btn-lg btn-block" style="margin-top: 1rem;" id="btn-start-game">
+            Start Quiz 🚀
+          </button>
+        </form>
+      </div>
+
+      <!-- 4B: Live Active Question Player -->
+      <div id="play-game-view" class="glass-card game-card" style="display: none;">
+        <div class="game-progress-header">
+          <div class="progress-info">
+            <span id="game-q-counter">Question 1 of 5</span>
+            <span id="game-q-percent">20%</span>
+          </div>
+          <div class="progress-bar-track">
+            <div class="progress-bar-fill" id="game-progress-bar"></div>
+          </div>
+        </div>
+
+        <div class="game-question-area">
+          <div class="game-question-text" id="game-question-text">
+            Loading question...
+          </div>
+        </div>
+
+        <div class="game-options-grid" id="game-options-container">
+          <!-- 4 option buttons generated here -->
+        </div>
+
+        <div id="game-feedback-text" style="text-align: center; margin-top: 1.25rem; font-weight: 700; color: var(--secondary); min-height: 1.5rem; font-size: 0.95rem;">
+          <!-- Moving to next question... -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         5. RESULT SCREEN
+         ==================================================================== -->
+    <section id="screen-result" class="screen">
+      <div class="glass-card result-card">
+        <div class="result-badge-container">
+          <div class="result-badge-icon" id="result-badge-emoji">🏆</div>
+        </div>
+
+        <h1 class="screen-title" style="font-size: 2.2rem; margin-bottom: 0.25rem;">Quiz Complete! 🎉</h1>
+        <div class="result-player-name" id="result-player-name">Player Name</div>
+
+        <div class="score-display-box">
+          <div class="score-number" id="result-score-num">8</div>
+          <div class="score-total">/ <span id="result-score-total">10</span></div>
+        </div>
+
+        <div>
+          <span class="score-percentage-pill" id="result-score-pct">80%</span>
+        </div>
+
+        <div class="result-message-box">
+          <div class="result-message-text" id="result-message-quote">
+            "Bestie level unlocked! 🫶"
+          </div>
+        </div>
+
+        <!-- Correct / Incorrect / Total breakdown -->
+        <div class="result-stats-row">
+          <div class="result-stat-card">
+            <div class="result-stat-val stat-correct" id="result-correct-count">8</div>
+            <div class="result-stat-lbl">Correct ✅</div>
+          </div>
+          <div class="result-stat-card">
+            <div class="result-stat-val stat-incorrect" id="result-incorrect-count">2</div>
+            <div class="result-stat-lbl">Incorrect ❌</div>
+          </div>
+          <div class="result-stat-card">
+            <div class="result-stat-val stat-total" id="result-total-count">10</div>
+            <div class="result-stat-lbl">Total Questions</div>
+          </div>
+        </div>
+
+        <div class="result-actions">
+          <button type="button" class="btn btn-secondary btn-lg" id="btn-result-view-leaderboard">
+            <span>🏆</span> View Leaderboard
+          </button>
+          <button type="button" class="btn btn-outline" id="btn-result-try-again">
+            <span>🔄</span> Try Again
+          </button>
+          <a href="#create" class="btn btn-primary">
+            <span>✨</span> Create Your Own Quiz
+          </a>
+          <a href="#home" class="btn btn-ghost">
+            <span>🏠</span> Back to Home
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         6. CREATOR RESULTS / LEADERBOARD SCREEN
+         ==================================================================== -->
+    <section id="screen-leaderboard" class="screen">
+      <div class="screen-header">
+        <span class="screen-badge">Leaderboard 🏆</span>
+        <h1 class="screen-title" id="lb-quiz-title">Quiz Leaderboard</h1>
+        <p class="screen-subtitle" id="lb-quiz-creator-sub">Created by Pooja</p>
+      </div>
+
+      <div class="glass-card">
+        <!-- Summary Stats -->
+        <div class="leaderboard-stats-grid">
+          <div class="stat-box">
+            <div class="stat-box-num" id="lb-total-participants">0</div>
+            <div class="stat-box-lbl">Total Participants 👥</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-box-num" id="lb-avg-score">0%</div>
+            <div class="stat-box-lbl">Average Score 📊</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-box-num" id="lb-high-score">0%</div>
+            <div class="stat-box-lbl">Highest Score 🌟</div>
+          </div>
+        </div>
+
+        <!-- Leaderboard List -->
+        <div class="leaderboard-container">
+          <div id="lb-list" class="leaderboard-list">
+            <!-- Dynamic rows inserted via JS -->
+          </div>
+        </div>
+
+        <!-- Leaderboard Controls -->
+        <div style="display: flex; flex-wrap: wrap; gap: 0.75rem; justify-content: center; margin-top: 2rem;">
+          <button type="button" class="btn btn-primary" id="btn-lb-share-quiz">
+            <span>💌</span> Share Quiz Link
+          </button>
+          <button type="button" class="btn btn-secondary" id="btn-lb-play-quiz">
+            <span>🎮</span> Play This Quiz
+          </button>
+          <a href="#create" class="btn btn-outline">
+            <span>✨</span> Create New Quiz
+          </a>
+          <a href="#home" class="btn btn-ghost">
+            <span>🏠</span> Home
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         7. 404 QUIZ NOT FOUND SCREEN
+         ==================================================================== -->
+    <section id="screen-not-found" class="screen">
+      <div class="glass-card" style="text-align: center; padding: 3rem 1.5rem;">
+        <div style="font-size: 4rem; margin-bottom: 0.5rem;">🔍💔</div>
+        <h1 class="screen-title" style="font-size: 2rem;">Quiz Not Found</h1>
+        <p style="color: var(--text-muted); max-width: 440px; margin: 0 auto 2rem;">
+          We couldn't find a quiz with ID <b id="not-found-id" style="color: var(--primary);">...</b>. It may have expired or the link might be misspelled.
+        </p>
+        <div style="display: flex; flex-wrap: wrap; gap: 0.75rem; justify-content: center;">
+          <a href="#create" class="btn btn-primary">
+            <span>✨</span> Create a Quiz
+          </a>
+          <a href="#home" class="btn btn-outline">
+            <span>🏠</span> Go to Home
+          </a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ====================================================================
+       MODALS & DIALOGS
+       ==================================================================== -->
+
+  <!-- Modal: My Created Quizzes -->
+  <div class="modal-backdrop" id="modal-my-quizzes" role="dialog" aria-modal="true">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 class="modal-title">👑 My Quizzes</h3>
+        <button type="button" class="modal-close-btn" id="btn-close-my-quizzes-modal" aria-label="Close">✕</button>
+      </div>
+      <div id="my-quizzes-container">
+        <!-- Dynamically rendered list of user's quizzes -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Play Quiz by Code Input -->
+  <div class="modal-backdrop" id="modal-play-code" role="dialog" aria-modal="true">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 class="modal-title">🎮 Join a Friend's Quiz</h3>
+        <button type="button" class="modal-close-btn" id="btn-close-play-modal" aria-label="Close">✕</button>
+      </div>
+      <form id="form-modal-play-code">
+        <div class="form-group">
+          <label class="form-label" for="modal-input-code">Enter 6-character Quiz Code:</label>
+          <input 
+            type="text" 
+            id="modal-input-code" 
+            class="input-field" 
+            placeholder="e.g. QZ7K29" 
+            maxlength="10" 
+            required 
+            autocomplete="off"
+            style="text-transform: uppercase; font-size: 1.25rem; font-weight: 800; letter-spacing: 0.1em; text-align: center;"
+          />
+        </div>
+        <button type="submit" class="btn btn-primary btn-block btn-lg" style="margin-top: 1rem;">
+          Join Quiz 🚀
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toast-container" aria-live="polite"></div>
+
+  <!-- App Footer -->
+  <footer class="app-footer">
+    <p>Made with 💖 for Best Friends Everywhere • BestieQuiz Prototype</p>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="js/storage.js"></script>
+  <script src="js/confetti.js"></script>
+  <script src="js/sound.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
