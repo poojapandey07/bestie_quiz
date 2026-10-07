@@ -337,24 +337,153 @@ class BestieQuizApp {
   // 2. CREATE QUIZ BUILDER LOGIC
   // =========================================================================
   setupCreateScreen() {
-    // If builder is empty, initialize with 2 default starter questions
-    if (this.builderQuestions.length === 0) {
-      this.builderQuestions = [
-        {
-          id: 'b_q_' + Date.now() + '_1',
-          question: '',
-          options: ['', '', '', ''],
-          correctAnswer: 0
-        },
-        {
-          id: 'b_q_' + Date.now() + '_2',
-          question: '',
-          options: ['', '', '', ''],
-          correctAnswer: 0
-        }
-      ];
+    const list = document.getElementById('question-cards-list');
+    // If builder questions array is empty or list has no cards, initialize default 2 questions
+    if (this.builderQuestions.length === 0 || !list || list.children.length === 0) {
+      if (this.builderQuestions.length === 0) {
+        this.builderQuestions = [
+          {
+            id: 'b_q_' + Date.now() + '_1',
+            question: '',
+            options: ['', '', '', ''],
+            correctAnswer: 0
+          },
+          {
+            id: 'b_q_' + Date.now() + '_2',
+            question: '',
+            options: ['', '', '', ''],
+            correctAnswer: 0
+          }
+        ];
+      }
+      this.renderFullQuestionBuilder();
     }
-    this.renderQuestionBuilder();
+  }
+
+  renderFullQuestionBuilder() {
+    const container = document.getElementById('question-cards-list');
+    if (!container) return;
+
+    container.innerHTML = '';
+    this.builderQuestions.forEach((q, idx) => {
+      const card = this.createQuestionCardElement(q, idx);
+      container.appendChild(card);
+    });
+
+    this.updateBuilderUI();
+  }
+
+  createQuestionCardElement(q, index) {
+    const card = document.createElement('div');
+    card.className = 'question-card';
+    card.id = `card_${q.id}`;
+    card.dataset.id = q.id;
+
+    const letters = ['A', 'B', 'C', 'D'];
+
+    card.innerHTML = `
+      <div class="question-card-header">
+        <div class="question-number-pill">
+          <span>✨</span> <span class="q-num-label">Question #${index + 1}</span>
+        </div>
+        <button type="button" class="btn-remove-q" title="Remove this question">✕ Remove</button>
+      </div>
+
+      <div class="form-group" style="margin-bottom: 0.75rem;">
+        <label class="form-label" style="font-size: 0.9rem;">
+          Question Text <span class="req">*</span>
+        </label>
+        <input 
+          type="text" 
+          class="input-field input-question-text" 
+          placeholder="e.g. What is my favorite comfort food?" 
+          value="${this.escapeHtml(q.question)}" 
+          maxlength="140"
+          autocomplete="off"
+        />
+      </div>
+
+      <div style="font-size: 0.85rem; font-weight: 700; color: var(--text-muted); margin-top: 1rem;">
+        Answer Options (Fill all 4) <span class="req">*</span>
+      </div>
+
+      <div class="options-builder-grid">
+        ${letters.map((letter, optIdx) => {
+          const isCorrect = q.correctAnswer === optIdx;
+          return `
+            <div class="option-builder-item ${isCorrect ? 'is-correct' : ''}" data-opt-idx="${optIdx}">
+              <div class="option-letter">${letter}</div>
+              <input 
+                type="text" 
+                class="option-input" 
+                placeholder="Option ${letter}..." 
+                value="${this.escapeHtml(q.options[optIdx] || '')}" 
+                maxlength="80"
+                autocomplete="off"
+              />
+            </div>
+          `;
+        }).join('')}
+      </div>
+
+      <div class="correct-selector-bar">
+        <span class="correct-selector-label">Select Correct Answer:</span>
+        <div class="correct-pills">
+          ${letters.map((letter, optIdx) => `
+            <label class="correct-pill">
+              <input 
+                type="radio" 
+                name="correct_radio_${q.id}" 
+                value="${optIdx}" 
+                ${q.correctAnswer === optIdx ? 'checked' : ''}
+              />
+              <span>${letter}</span>
+            </label>
+          `).join('')}
+        </div>
+      </div>
+    `;
+
+    // Live Event Listeners to keep object in sync at all times
+    const qInput = card.querySelector('.input-question-text');
+    qInput.addEventListener('input', (e) => {
+      q.question = e.target.value;
+    });
+    qInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') e.preventDefault();
+    });
+
+    const optInputs = card.querySelectorAll('.option-input');
+    optInputs.forEach((optInput, optIdx) => {
+      optInput.addEventListener('input', (e) => {
+        q.options[optIdx] = e.target.value;
+      });
+      optInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') e.preventDefault();
+      });
+    });
+
+    const radios = card.querySelectorAll(`input[name="correct_radio_${q.id}"]`);
+    radios.forEach(radio => {
+      radio.addEventListener('change', (e) => {
+        const val = parseInt(e.target.value, 10);
+        q.correctAnswer = val;
+        const items = card.querySelectorAll('.option-builder-item');
+        items.forEach((item, itemIdx) => {
+          item.classList.toggle('is-correct', itemIdx === val);
+        });
+        window.sfx.playSelect();
+      });
+    });
+
+    const removeBtn = card.querySelector('.btn-remove-q');
+    removeBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      this.removeQuestionFromBuilder(q.id);
+    });
+
+    return card;
   }
 
   addQuestionToBuilder(data = null) {
@@ -364,22 +493,27 @@ class BestieQuizApp {
     }
 
     const newQuestion = data || {
-      id: 'b_q_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
+      id: 'b_q_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5),
       question: '',
       options: ['', '', '', ''],
       correctAnswer: 0
     };
 
     this.builderQuestions.push(newQuestion);
-    this.renderQuestionBuilder();
 
-    // Scroll to the new card
-    setTimeout(() => {
-      const cards = document.querySelectorAll('.question-card');
-      if (cards.length > 0) {
-        cards[cards.length - 1].scrollIntoView({ behavior: 'smooth', block: 'center' });
-      }
-    }, 50);
+    const container = document.getElementById('question-cards-list');
+    if (container) {
+      const card = this.createQuestionCardElement(newQuestion, this.builderQuestions.length - 1);
+      container.appendChild(card);
+
+      this.updateBuilderUI();
+
+      setTimeout(() => {
+        card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        const input = card.querySelector('.input-question-text');
+        if (input) input.focus();
+      }, 60);
+    }
   }
 
   addSampleQuestionToBuilder() {
@@ -389,7 +523,7 @@ class BestieQuizApp {
     }
     const randomSample = FRIENDSHIP_IDEAS[Math.floor(Math.random() * FRIENDSHIP_IDEAS.length)];
     const sampleClone = {
-      id: 'b_q_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
+      id: 'b_q_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5),
       question: randomSample.question,
       options: [...randomSample.options],
       correctAnswer: randomSample.correctAnswer
@@ -398,173 +532,75 @@ class BestieQuizApp {
     this.showToast('Added inspiration question! 💡', '✨');
   }
 
-  removeQuestionFromBuilder(index) {
+  removeQuestionFromBuilder(questionId) {
     if (this.builderQuestions.length <= 2) {
       this.showToast('A quiz must have at least 2 questions!', '⚠️');
       return;
     }
-    // Save current values from DOM before removing
-    this.syncBuilderFromDOM();
-    this.builderQuestions.splice(index, 1);
-    this.renderQuestionBuilder();
+
+    const index = this.builderQuestions.findIndex(q => q.id === questionId);
+    if (index !== -1) {
+      this.builderQuestions.splice(index, 1);
+    }
+
+    const card = document.getElementById(`card_${questionId}`);
+    if (card) {
+      card.style.transition = 'all 0.25s ease';
+      card.style.opacity = '0';
+      card.style.transform = 'scale(0.9)';
+      setTimeout(() => {
+        card.remove();
+        this.updateBuilderUI();
+      }, 250);
+    } else {
+      this.updateBuilderUI();
+    }
+
     window.sfx.playWhoosh();
   }
 
-  syncBuilderFromDOM() {
-    const list = document.getElementById('question-cards-list');
-    if (!list) return;
-
-    const cards = list.querySelectorAll('.question-card');
-    cards.forEach((card, idx) => {
-      if (this.builderQuestions[idx]) {
-        const qInput = card.querySelector('.input-question-text');
-        if (qInput) this.builderQuestions[idx].question = qInput.value;
-
-        const optInputs = card.querySelectorAll('.option-input');
-        optInputs.forEach((optInput, optIdx) => {
-          this.builderQuestions[idx].options[optIdx] = optInput.value;
-        });
-
-        const checkedRadio = card.querySelector('input[type="radio"]:checked');
-        if (checkedRadio) {
-          this.builderQuestions[idx].correctAnswer = parseInt(checkedRadio.value, 10);
-        }
-      }
-    });
-  }
-
-  renderQuestionBuilder() {
-    const container = document.getElementById('question-cards-list');
+  updateBuilderUI() {
     const counter = document.getElementById('question-count-text');
-    if (!container) return;
+    if (counter) {
+      counter.textContent = `Questions: ${this.builderQuestions.length} / 30 (Min: 2, Max: 30)`;
+    }
 
-    counter.textContent = `Questions: ${this.builderQuestions.length} / 30 (Min: 2, Max: 30)`;
+    // Update Question # labels and remove buttons
+    const container = document.getElementById('question-cards-list');
+    if (container) {
+      const cards = container.querySelectorAll('.question-card');
+      const isMoreThanTwo = this.builderQuestions.length > 2;
+      cards.forEach((card, idx) => {
+        const label = card.querySelector('.q-num-label');
+        if (label) label.textContent = `Question #${idx + 1}`;
 
-    container.innerHTML = '';
-
-    const letters = ['A', 'B', 'C', 'D'];
-
-    this.builderQuestions.forEach((q, idx) => {
-      const card = document.createElement('div');
-      card.className = 'question-card';
-      card.dataset.index = idx;
-
-      card.innerHTML = `
-        <div class="question-card-header">
-          <div class="question-number-pill">
-            <span>✨</span> Question #${idx + 1}
-          </div>
-          ${
-            this.builderQuestions.length > 2
-              ? `<button type="button" class="btn-remove-q" data-remove-idx="${idx}">✕ Remove</button>`
-              : ''
-          }
-        </div>
-
-        <div class="form-group" style="margin-bottom: 0.75rem;">
-          <label class="form-label" style="font-size: 0.9rem;">
-            Question Text <span class="req">*</span>
-          </label>
-          <input 
-            type="text" 
-            class="input-field input-question-text" 
-            placeholder="e.g. What is my favorite food?" 
-            value="${this.escapeHtml(q.question)}" 
-            required 
-            maxlength="140"
-          />
-        </div>
-
-        <div style="font-size: 0.85rem; font-weight: 700; color: var(--text-muted); margin-top: 1rem;">
-          Answer Options (Fill all 4) <span class="req">*</span>
-        </div>
-
-        <div class="options-builder-grid">
-          ${letters
-            .map((letter, optIdx) => {
-              const isCorrect = q.correctAnswer === optIdx;
-              return `
-              <div class="option-builder-item ${isCorrect ? 'is-correct' : ''}" data-opt-idx="${optIdx}">
-                <div class="option-letter">${letter}</div>
-                <input 
-                  type="text" 
-                  class="option-input" 
-                  placeholder="Option ${letter}..." 
-                  value="${this.escapeHtml(q.options[optIdx] || '')}" 
-                  required 
-                  maxlength="80"
-                />
-              </div>
-            `;
-            })
-            .join('')}
-        </div>
-
-        <div class="correct-selector-bar">
-          <span class="correct-selector-label">Select Correct Answer:</span>
-          <div class="correct-pills">
-            ${letters
-              .map(
-                (letter, optIdx) => `
-              <label class="correct-pill">
-                <input 
-                  type="radio" 
-                  name="correct_q_${idx}" 
-                  value="${optIdx}" 
-                  ${q.correctAnswer === optIdx ? 'checked' : ''}
-                />
-                <span>${letter}</span>
-              </label>
-            `
-              )
-              .join('')}
-          </div>
-        </div>
-      `;
-
-      // Event listener for remove
-      const removeBtn = card.querySelector('.btn-remove-q');
-      if (removeBtn) {
-        removeBtn.addEventListener('click', () => {
-          this.removeQuestionFromBuilder(idx);
-        });
-      }
-
-      // Event listener for radio change to toggle visual highlight on options
-      const radios = card.querySelectorAll('input[type="radio"]');
-      radios.forEach(radio => {
-        radio.addEventListener('change', (e) => {
-          const selectedVal = parseInt(e.target.value, 10);
-          this.builderQuestions[idx].correctAnswer = selectedVal;
-          const items = card.querySelectorAll('.option-builder-item');
-          items.forEach((item, itemIdx) => {
-            item.classList.toggle('is-correct', itemIdx === selectedVal);
-          });
-          window.sfx.playSelect();
-        });
+        const removeBtn = card.querySelector('.btn-remove-q');
+        if (removeBtn) {
+          removeBtn.style.display = isMoreThanTwo ? 'inline-flex' : 'none';
+        }
       });
-
-      container.appendChild(card);
-    });
+    }
   }
 
   handleCreateQuizSubmit() {
-    this.syncBuilderFromDOM();
+    const creatorNameInput = document.getElementById('input-creator-name');
+    const quizTitleInput = document.getElementById('input-quiz-title');
+    const quizDescInput = document.getElementById('input-quiz-desc');
 
-    const creatorName = document.getElementById('input-creator-name').value.trim();
-    const quizTitle = document.getElementById('input-quiz-title').value.trim();
-    const quizDesc = document.getElementById('input-quiz-desc').value.trim();
+    const creatorName = creatorNameInput ? creatorNameInput.value.trim() : '';
+    const quizTitle = quizTitleInput ? quizTitleInput.value.trim() : '';
+    const quizDesc = quizDescInput ? quizDescInput.value.trim() : '';
 
     // Validations
     if (!creatorName) {
       this.showToast('Please enter your name!', '⚠️');
-      document.getElementById('input-creator-name').focus();
+      if (creatorNameInput) creatorNameInput.focus();
       return;
     }
 
     if (!quizTitle) {
       this.showToast('Please enter a quiz title!', '⚠️');
-      document.getElementById('input-quiz-title').focus();
+      if (quizTitleInput) quizTitleInput.focus();
       return;
     }
 
@@ -611,6 +647,14 @@ class BestieQuizApp {
         correctAnswer: q.correctAnswer
       }))
     });
+
+    // Reset builder state for future creates
+    this.builderQuestions = [];
+    if (creatorNameInput) creatorNameInput.value = '';
+    if (quizTitleInput) quizTitleInput.value = '';
+    if (quizDescInput) quizDescInput.value = '';
+    const container = document.getElementById('question-cards-list');
+    if (container) container.innerHTML = '';
 
     window.sfx.playFanfare();
     window.confetti.launch({ count: 140, useEmojis: true });
